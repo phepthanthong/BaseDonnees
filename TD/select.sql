@@ -84,7 +84,7 @@
 -- )
 -- order by NOM_ACTEUR;
 
--- l
+-- l XEM LAI CAU NAY
 -- select distinct a.PRENOM_ACTEUR
 -- from acteur a
 -- union
@@ -209,20 +209,161 @@
 -- group by Genre ;
 
 -- 2
-select R.NUMERO_REALISATEUR , NOM_REALISATEUR , 
-count(*) , count(NUMERO_FILM) , count(distinct F.NUMERO_REALISATEUR) 
-from REALISATEUR R
-left outer join FILM F on R.NUMERO_REALISATEUR = F.NUMERO_REALISATEUR
-where NATION_REALISATEUR = 'FRANCAISE'
-group by R.NUMERO_REALISATEUR , NOM_REALISATEUR , PRENOM_REALISATEUR ;
+-- select R.NUMERO_REALISATEUR as NUM_REAL , NOM_REALISATEUR , 
+-- count(*) , count(NUMERO_FILM) , count(distinct F.NUMERO_REALISATEUR) 
+-- from REALISATEUR R
+-- left outer join FILM F on R.NUMERO_REALISATEUR = F.NUMERO_REALISATEUR
+-- where NATION_REALISATEUR = 'FRANCAISE'
+-- group by R.NUMERO_REALISATEUR , NOM_REALISATEUR , PRENOM_REALISATEUR ;
 
+-- 3
+-- select * 
+-- from ACTEUR
+-- where NUMERO_ACTEUR <> all ( select NUMERO_ACTEUR
+-- from ROLE ) ;
 
+-- 4
+-- select distinct PRENOM_REALISATEUR 
+-- from REALISATEUR
+-- where exists ( select 123456789 --74552575275
+-- from ACTEUR 
+-- where PRENOM_ACTEUR = PRENOM_REALISATEUR ) ;
 
+-- 5
+-- select count(*) compte , R.* 
+-- from REALISATEUR R , REALISATEUR R_DEUX 
+-- where R.NATION_REALISATEUR = R_DEUX.NATION_REALISATEUR 
+-- group by R.NUMERO_REALISATEUR , R.NOM_REALISATEUR , R.PRENOM_REALISATEUR , 
+-- R.NATION_REALISATEUR
+-- order by compte , R.NUMERO_REALISATEUR ;
 
+-- 6a
+-- select NUMERO_ACTEUR , NUMERO_FILM , 1
+-- from ROLE
+-- union
+-- select NUMERO_ACTEUR , null , count(*)
+-- from ROLE
+-- group by NUMERO_ACTEUR
+-- union
+-- select null , NUMERO_FILM , count(*)
+-- from ROLE
+-- group by NUMERO_FILM
+-- union 
+-- select null , null , count(*)
+-- from ROLE
+-- order by 1 asc nulls last , 2 asc nulls last ;
+--
+-- select NUMERO_ACTEUR , NUMERO_FILM , count(*)
+-- from ROLE
+-- group by cube(NUMERO_ACTEUR , NUMERO_FILM )
+-- order by 1 asc nulls last , 2 asc nulls last ;
 
+-- 6b
+-- select NUMERO_ACTEUR , NUMERO_FILM , 1
+-- from ROLE
+-- order by 1 asc nulls last , 2 asc nulls last ;
+--
+-- select NUMERO_ACTEUR , NUMERO_FILM , count(*)
+-- from ROLE
+-- group by grouping sets ( NUMERO_ACTEUR , NUMERO_FILM , () )
+-- order by 1 asc nulls last , 2 asc nulls last ;
 
+-- 7
+-- select REALISATEUR.NUMERO_REALISATEUR , ACTEUR.NUMERO_ACTEUR , 
+-- count(FILM.NUMERO_FILM)
+-- from REALISATEUR
+-- join FILM on REALISATEUR.NUMERO_REALISATEUR = FILM.NUMERO_REALISATEUR
+-- join ROLE on FILM.NUMERO_FILM = ROLE.NUMERO_FILM
+-- join ACTEUR on ROLE.NUMERO_ACTEUR = ACTEUR.NUMERO_ACTEUR
+-- where REALISATEUR.NUMERO_REALISATEUR <= 3 and ACTEUR.NUMERO_ACTEUR <= 3
+-- group by REALISATEUR.NUMERO_REALISATEUR , ACTEUR.NUMERO_ACTEUR 
+-- order by REALISATEUR.NUMERO_REALISATEUR , ACTEUR.NUMERO_ACTEUR ; 
+--
+-- select REALISATEUR.NUMERO_REALISATEUR , ACTEUR.NUMERO_ACTEUR , 
+-- count(FILM.NUMERO_FILM)
+-- from REALISATEUR
+-- join FILM on REALISATEUR.NUMERO_REALISATEUR = FILM.NUMERO_REALISATEUR
+-- join ROLE on FILM.NUMERO_FILM = ROLE.NUMERO_FILM
+-- join ACTEUR on ROLE.NUMERO_ACTEUR = ACTEUR.NUMERO_ACTEUR
+-- where REALISATEUR.NUMERO_REALISATEUR <= 3 and ACTEUR.NUMERO_ACTEUR <= 3
+-- group by cube( REALISATEUR.NUMERO_REALISATEUR , ACTEUR.NUMERO_ACTEUR ) 
+-- order by REALISATEUR.NUMERO_REALISATEUR nulls last , 
+-- ACTEUR.NUMERO_ACTEUR nulls last ; 
 
+-- 8a 
+-- select GENRE , count(*) from FILM group by GENRE order by count(*) desc ;
+--
+-- select * 
+-- from ( select GENRE , count(*) from FILM group by GENRE order by count(*) desc ) 
+-- where rownum <= 9 ; 
 
+-- 8b
+-- select GENRE , NbFilmsDuGenre 
+-- from ( select GENRE , NbFilmsDuGenre , 
+-- rank() over(order by NbFilmsDuGenre desc) RangNbFilmsDuGenre 
+-- from ( select GENRE , count(*) NbFilmsDuGenre 
+-- from FILM 
+-- group by GENRE 
+-- order by NbFilmsDuGenre desc ) ) 
+-- where RangNbFilmsDuGenre <= 2 ; 
+-- ou 4
+
+-- 9
+-- select row_number() over(order by NATION_ACTEUR) row_number_NATION_ACTEUR , 
+-- rank() over(order by NATION_ACTEUR) , 
+-- NUMERO_ACTEUR , NOM_ACTEUR , PRENOM_ACTEUR , NATION_ACTEUR 
+-- from ACTEUR
+-- where substr(PRENOM_ACTEUR,0,1) in ( 'B' , 'K' , 'M' , 'P' )
+-- order by row_number_NATION_ACTEUR ;
+
+-- 10
+-- select GENRE , rank() over(partition by GENRE order by DUREE) , 
+-- NUMERO_FILM , TITRE_FILM , DUREE , 
+-- count(*) over(partition by GENRE) , count(*) over() , 
+-- min(Duree) over(partition by GENRE) , min(Duree) over() , 
+-- max(Duree) over(partition by GENRE) , max(Duree) over() 
+-- from FILM
+-- where trim(GENRE) not like '% %'
+-- order by GENRE , DUREE , NUMERO_FILM ;
+
+-- 11
+-- select NUMERO_ACTEUR , trim(NOM_ACTEUR) || ' ' || ltrim(PRENOM_ACTEUR) , 
+-- DATE_DE_NAISSANCE , 
+-- NATION_ACTEUR , case when NATION_ACTEUR = 'FRANCAISE' then 'française' 
+-- else 'étrangère' 
+-- end FR_OU_ETR
+-- from ACTEUR
+-- where extract(year from DATE_DE_NAISSANCE) between 1955 and 1960 
+-- or regexp_like(PRENOM_ACTEUR,'^[D-F]') 
+-- order by NOM_ACTEUR ;
+
+-- 12
+-- select NUMERO_ACTEUR , NOM_ACTEUR , nullif(NATION_ACTEUR,'FRANCAISE') , 
+-- coalesce(cast(DATE_DE_NAISSANCE as char(20)),'inconnue')
+-- from ACTEUR
+-- where substr(NOM_ACTEUR,3,1) in ('A','E','I','O','U','Y') ;
+
+-- 13
+-- select NUMERO_ACTEUR , NOM_ACTEUR , DATE_DE_NAISSANCE , 
+-- extract(year from DATE_DE_NAISSANCE) ANNEE_DE_NAISSANCE, 
+-- width_bucket(1900+mod(extract(year from DATE_DE_NAISSANCE),100),1950,1970,4) WB
+-- from ACTEUR 
+-- where DATE_DE_NAISSANCE is not null ;
+
+-- 14
+-- select NUMERO_ACTEUR , NOM_ACTEUR , DATE_DE_NAISSANCE , 
+-- ( DATE_DE_NAISSANCE - interval '99' YEAR ) DATE_DE_NAISSANCE_XXeme
+-- from ACTEUR
+-- where DATE_DE_NAISSANCE is not null 
+-- and ( DATE_DE_NAISSANCE - interval '99' YEAR , 
+-- DATE_DE_NAISSANCE - interval '99' YEAR ) overlaps 
+-- ( CURRENT_DATE - interval '50' YEAR , CURRENT_DATE - interval '30' YEAR ) ;
+
+-- 15
+-- select stddev(NUMERO_FILM) , variance(NUMERO_FILM) , 
+-- stddev(NUMERO_REALISATEUR) , variance(NUMERO_REALISATEUR) , 
+-- corr(NUMERO_FILM,NUMERO_REALISATEUR)
+-- from FILM ;
 
 
 
