@@ -53,7 +53,7 @@ create table TARIFS
 	CODESEJOUR		varchar(20)	not null,
 	NOSEM			number				,
 	PRIXTTC			number				,
-	constraint pk_tarifs primary key (CODESEJOUR)
+	constraint pk_tarifs primary key (CODESEJOUR,NOSEM)
 );
 
 alter table SEJOURS

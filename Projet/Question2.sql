@@ -35,7 +35,7 @@ insert into TARIFS values ('SSND07', 5,  899);
 insert into TARIFS values ('SSND07', 6,  749);
 insert into TARIFS values ('SSND07', 7,  729);
 insert into TARIFS values ('SSND07', 8,  799);
-insert into TARIFS values ('SSND07', 1,  799);
+insert into TARIFS values ('SSND07', 9,  799);
 insert into TARIFS values ('SSPM08', 1,  299);
 insert into TARIFS values ('SSPM08', 2,  299);
 insert into TARIFS values ('SSPM08', 3,  578);
@@ -47,5 +47,4 @@ insert into TARIFS values ('SSPM08', 8,  299);
 insert into TARIFS values ('SSPM08', 9,  299);
 
 commit;
-
 
