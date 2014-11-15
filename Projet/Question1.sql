@@ -27,10 +27,10 @@ create table PAYS
 -- ============================================================
 create table SEJOURS
 (
-	CODESEJOUR			varchar(20)	not null,
+	CODESEJOUR			varchar(7)	not null,
 	CODEPAYS			number		not null,
-	NOMSEJOUR			varchar(1000)		,
-	DESCRIPTION_SEJOUR	varchar(1000)		,
+	NOMSEJOUR			varchar(30)			,
+	DESCRIPTION_SEJOUR	varchar(50)			,
 	constraint pk_sejours primary key (CODESEJOUR)
 );
 
@@ -50,7 +50,7 @@ create table CALENDRIER
 -- ============================================================
 create table TARIFS
 (
-	CODESEJOUR		varchar(20)	not null,
+	CODESEJOUR		varchar(7)	not null,
 	NOSEM			number				,
 	PRIXTTC			number				,
 	constraint pk_tarifs primary key (CODESEJOUR,NOSEM)
