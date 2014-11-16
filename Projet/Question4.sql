@@ -2,7 +2,7 @@
 /* MODIFICATION DE LA BASE INITIALE */
 
 -- ==================================
--- Nom de la base: OFFRES_DE_SEJOURS
+-- Nom de la base: AGENCE DE VOYAGE
 -- SGBD: Oracle Database 11g Express Edition
 -- ==================================
 drop table CALENDRIER cascade constraint;
@@ -25,18 +25,19 @@ drop table DETAIL_RESERV cascade constraint;
 
 drop table RESERVATION cascade constraint;
 
+drop table HEBERGEMENT cascade constraint;
+
+drop table TRANSPORT cascade constraint;	
+
 -- ============================================================
 --   Table : SEJOURS                                              
 -- ============================================================
 create table SEJOURS
 (
 	CODESEJOUR			varchar(7)	not null,
-	NOMSEJOUR			varchar(30)			,
-	DESCRIPTION_SEJOUR	varchar(50)			,
-	TYPE_HEBERG			varchar(2)			,
-	NB_JOURS			number				,
-	NB_NUITS			number				,
-	NB_SEJOURS			number				,
+	TYPE_SEJOUR			char(1)		not null,
+	NB_RESERV			number				,
+	NB_SEJOURS			number		not null,
 	constraint pk_sejours primary key (CODESEJOUR)
 );
 
@@ -81,13 +82,13 @@ create table PAYS
 create table CIRCUITS
 (
 	CODESEJOUR			varchar(7)	not null,
-	TYPE_TRANS			varchar(15)			,
 	NOMSEJOUR			varchar(30)			,
 	DESCRIPTION_SEJOUR	varchar(50)			,
+	TYPE_TRANS			char(2)				,
+	TYPE_HEBERG			char(2)				,
 	NB_JOURS			number				,
 	NB_NUITS			number				,
-	TYPE_HEBERG			varchar(2)			,
-	NB_SEJOURS			varchar(2)			,
+	NB_SEJOURS			number				,
 	constraint pk_circuits primary key (CODESEJOUR)
 );
 
@@ -100,7 +101,7 @@ create table ETAP_SEJ
 	RANG_PAS		number				,
 	CODEVILLE		number		not null,
 	NB_JOURS_ETAP	number				,
-	constraint pk_etap_sej primary key (CODESEJOUR)
+	constraint pk_etap_sej primary key (CODESEJOUR,RANG_PAS)
 );
 
 -- ============================================================
@@ -121,14 +122,14 @@ create table HOTEL_RESIDENCE
 (
 	CODESEJOUR			varchar(7)	not null,
 	CODEVILLE			number		not null,
-	NOMHOTEL			varchar(15)			,
+	NOM_HOTEL			varchar(15)			,
 	NB_ETOILE			number				,
 	ADR_HOTEL			varchar(30)			,
 	TEL_HOTEL			number				,
 	NOMSEJOUR			varchar(30)			,
 	DESCRIPTION_SEJOUR	varchar(50)			,
-	NB_JOURS			number				,
-	TYPE_HEBERG			varchar(2)			,
+	TYPE_HEBERG			char(2)				,
+	NB_JOURS			number				,	
 	NB_NUITS			number				,
 	NB_SEJOURS			number				,
 	constraint pk_hotel_residence primary key (CODESEJOUR)
@@ -139,18 +140,19 @@ create table HOTEL_RESIDENCE
 -- ============================================================
 create table RESERVATION
 (	
-	CODERES			number	not null,
-	NOM_PERS		varchar(10)		,
-	PRENOM_PERS		varchar(10)		,
-	ADR_PERS		varchar(30)		,
-	CODEPOST_PERS	varchar(5)		,
-	VILLE_PERS		varchar(10)		,
-	TEL_PERS		number			,
-	DATE_RES		date			,
-	NB_ADULT		number			,
-	NB_ENF			number			,
-	SOMME_VERSEE	number			,
-	DATE_DE_VERS	date			,
+	CODERES			number		not null,
+	NOM_PERS		varchar(10)	not null,
+	PRENOM_PERS		varchar(10)	not null,
+	ADR_PERS		varchar(30)	not null,
+	CODEPOST_PERS	varchar(5)	not null,
+	VILLE_PERS		varchar(10)	not null,
+	TEL_PERS		number		not null,
+	DATE_RES		date		not null,
+	NB_ADULTS		number		not null,
+	NB_ENF			number		not null,
+	SOMME_VERSEE	number				,
+	DATE_DE_VERSEE	date				,
+	MONT_RESERV		number		not null,
 	constraint pk_reservation primary key (CODERES)
 );
 	
@@ -162,9 +164,29 @@ create table DETAIL_RESERV
 	NOSEM			number		not null,
 	CODERES			number		not null,
 	CODESEJOUR		varchar(7)	not null,
-	PRIXTTC_ADULT	number				,
-	PRIXTTC_ENF		number				,
-	constraint pk_detail_reserv primary key (NOSEM,CODESEJOUR)
+	PRIXTTC_ADULT	number		not null,
+	PRIXTTC_ENF		number		not null,
+	constraint pk_detail_reserv primary key (NOSEM,CODERES)
+);
+
+-- ============================================================
+--   Table : TRANSPORT                                             
+-- ============================================================
+create table TRANSPORT
+(
+	TYPE_TRANS 	char(2) not null,
+	NOM_TRANS	char(20) not null,
+	constraint pk_transport primary key (TYPE_TRANS)
+);
+
+-- ============================================================
+--   Table : HEBERGEMENT                                            
+-- ============================================================
+create table HEBERGEMENT
+(
+	TYPE_HEBERG	char(2) 	not null,
+	NOM_HEBERG	char(20) 	not null,
+	constraint pk_hebergement primary key (TYPE_HEBERG)
 );
 
 alter table TARIFS
@@ -195,9 +217,21 @@ alter table HOTEL_RESIDENCE
 	add constraint fk2_hotel_residence foreign key (CODEVILLE)
 		references VILLE_ETAP (CODEVILLE);
 		
+alter table HOTEL_RESIDENCE
+	add constraint fk3_hotel_residence foreign key (TYPE_HEBERG)
+		references HEBERGEMENT (TYPE_HEBERG);
+		
 alter table CIRCUITS
 	add constraint fk1_circuits foreign key (CODESEJOUR)
 		references SEJOURS (CODESEJOUR);
+		
+alter table CIRCUITS
+	add constraint fk2_circuits foreign key (TYPE_TRANS)
+		references TRANSPORT (TYPE_TRANS);
+		
+alter table CIRCUITS
+	add constraint fk3_circuits foreign key (TYPE_HEBERG)
+		references HEBERGEMENT (TYPE_HEBERG);	
 		
 alter table ETAP_SEJ
 	add constraint fk1_etap_sej foreign key (CODESEJOUR)
@@ -211,3 +245,4 @@ alter table VILLE_ETAP
 	add constraint fk1_ville_etap foreign key (CODEPAYS)
 		references PAYS (CODEPAYS);
 		
+

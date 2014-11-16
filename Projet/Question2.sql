@@ -1,3 +1,5 @@
+/* INSERTION DES DONNEES */
+
 delete from TARIFS;
 delete from CALENDRIER;
 delete from SEJOURS;
