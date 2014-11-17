@@ -52,18 +52,18 @@ insert into VILLE_ETAP values (11, 2, 'TOULOUSE'	);
 
 commit;
 
-insert into SEJOURS values ('SSND07', 'C',  20, 100);
-insert into SEJOURS values ('SSMD04', 'F',  13,  30);
-insert into SEJOURS values ('SSPM08', 'F',  40, 125);
-insert into SEJOURS values ('SSFR02', 'F',  60, 200);
-insert into SEJOURS values ('SSFR05', 'C',  90, 115);
-insert into SEJOURS values ('SSFR09', 'C',  25,  80);
+insert into SEJOURS values ('SSND07', 'C',  default, 100);
+insert into SEJOURS values ('SSMD04', 'F',  default,  30);
+insert into SEJOURS values ('SSPM08', 'F',  default, 125);
+insert into SEJOURS values ('SSFR02', 'F',  default, 200);
+insert into SEJOURS values ('SSFR05', 'C',  default, 115);
+insert into SEJOURS values ('SSFR09', 'C',  default,  80);
 
 commit;
 
-insert into CIRCUITS values ('SSND07', 'SEJOUR CLUB DAKAR SOMONE', 'DECOUVREZ LA SOMONE, SA BAIE, SES PLAGES,...', 'A', 'DP', 8, 7, 10);
-insert into CIRCUITS values ('SSFR05', 'LA CAPITALE DE BORDELAIS', 'DEGOUTER LE VIN RENOMME DU BORDEAUX ... ', 'V', 'PC', 8, 7, 10);
-insert into CIRCUITS values ('SSFR09', 'AU SOMMET DES MONTAGNES', 'FRANCHIR LES FLANTS ET LES SOMMETS ...', 'V', 'HS', 8, 7, 10);
+insert into CIRCUITS values ('SSND07', 'SEJOUR CLUB DAKAR SOMONE', 'DECOUVREZ LA SOMONE, SA BAIE, SES PLAGES,...', 'A', 'DP', 8, 7);
+insert into CIRCUITS values ('SSFR05', 'LA CAPITALE DE BORDELAIS', 'DEGOUTER LE VIN RENOMME DU BORDEAUX ... ', 'V', 'PC', 8, 7);
+insert into CIRCUITS values ('SSFR09', 'AU SOMMET DES MONTAGNES', 'FRANCHIR LES FLANTS ET LES SOMMETS ...', 'V', 'HS', 8, 7);
 
 commit;
 
@@ -85,4 +85,15 @@ insert into CALENDRIER values (15, '02/05/2011', '09/05/2011');
 
 commit;
 
+insert into TARIFS values ('SSND07', 1, 250000, 100000, 30000, 40000);
+insert into TARIFS values ('SSPM08', 2, 1000000, 50000, 40000, 80000);
+insert into TARIFS values ('SSFR02', 3, 800000, 100000, 20000, 30000); 
+
+commit;
+
+insert into reservation values ( 1, 'hieu', 'trung', '546/256', '084', 'tphcm', 123456789, '20/11/2009', 10, 3, 50000, '20/11/2009',null );
+insert into reservation values ( 2, 'son', 'lam', '38/45', '084', 'tphcm', 987654321, '05/12/2010', 5, 4, 100000, '06/12/2010',null );
+insert into reservation values ( 3, 'minh', 'huong', '162/796', '084', 'tphcm', 009-545-2184, '12/12/2010', 2, 2, 200000, '12/12/2010',null );
+
+commit;
 

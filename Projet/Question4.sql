@@ -29,6 +29,8 @@ drop table HEBERGEMENT cascade constraint;
 
 drop table TRANSPORT cascade constraint;	
 
+drop table TEMP_RESERV;
+
 -- ============================================================
 --   Table : SEJOURS                                              
 -- ============================================================
@@ -36,7 +38,7 @@ create table SEJOURS
 (
 	CODESEJOUR			varchar(7)	not null,
 	TYPE_SEJOUR			char(1)		not null,
-	NB_RESERV			number				,
+	NB_RESERV			number		default 0,
 	NB_SEJOURS			number		not null,
 	constraint pk_sejours primary key (CODESEJOUR)
 );
@@ -58,11 +60,11 @@ create table CALENDRIER
 create table TARIFS
 (
 	CODESEJOUR		varchar(7)	not null,
-	NOSEM			number				,
-	PRIXTTC			number				,
-	REDUC_ENF		number				,
-	PRIX_SEM_SUP	number				,
-	SUPPL_CH_SEULE	number				,	
+	NOSEM			number		not null,
+	PRIXTTC			number		not null,
+	REDUC_ENF		number		not null,
+	PRIX_SEM_SUP	number		not null,
+	SUPPL_CH_SEULE	number		not null,	
 	constraint pk_tarifs primary key (CODESEJOUR,NOSEM)
 );
 
@@ -82,13 +84,12 @@ create table PAYS
 create table CIRCUITS
 (
 	CODESEJOUR			varchar(7)	not null,
-	NOMSEJOUR			varchar(30)			,
+	NOMSEJOUR			varchar(30)	not null,
 	DESCRIPTION_SEJOUR	varchar(50)			,
-	TYPE_TRANS			char(2)				,
-	TYPE_HEBERG			char(2)				,
+	TYPE_TRANS			char(2)		not null,
+	TYPE_HEBERG			char(2)		not null,
 	NB_JOURS			number				,
-	NB_NUITS			number				,
-	NB_SEJOURS			number				,
+	NB_NUITS			number				,	
 	constraint pk_circuits primary key (CODESEJOUR)
 );
 
@@ -122,16 +123,15 @@ create table HOTEL_RESIDENCE
 (
 	CODESEJOUR			varchar(7)	not null,
 	CODEVILLE			number		not null,
-	NOM_HOTEL			varchar(15)			,
-	NB_ETOILE			number				,
-	ADR_HOTEL			varchar(30)			,
-	TEL_HOTEL			number				,
-	NOMSEJOUR			varchar(30)			,
+	NOM_HOTEL			varchar(15)	not null,
+	NB_ETOILE			number		not null,
+	ADR_HOTEL			varchar(30)	not null,
+	TEL_HOTEL			number		not null,
+	NOMSEJOUR			varchar(30)	not null,
 	DESCRIPTION_SEJOUR	varchar(50)			,
 	TYPE_HEBERG			char(2)				,
 	NB_JOURS			number				,	
-	NB_NUITS			number				,
-	NB_SEJOURS			number				,
+	NB_NUITS			number				,	
 	constraint pk_hotel_residence primary key (CODESEJOUR)
 );
 
@@ -152,7 +152,7 @@ create table RESERVATION
 	NB_ENF			number		not null,
 	SOMME_VERSEE	number				,
 	DATE_DE_VERSEE	date				,
-	MONT_RESERV		number		not null,
+	MONT_RESERV		number				,
 	constraint pk_reservation primary key (CODERES)
 );
 	
@@ -164,8 +164,9 @@ create table DETAIL_RESERV
 	NOSEM			number		not null,
 	CODERES			number		not null,
 	CODESEJOUR		varchar(7)	not null,
-	PRIXTTC_ADULT	number		not null,
-	PRIXTTC_ENF		number		not null,
+	PRIXTTC_ADULT	number				,
+	PRIXTTC_ENF		number				,
+	TOTAL			number				,
 	constraint pk_detail_reserv primary key (NOSEM,CODERES)
 );
 
@@ -189,6 +190,20 @@ create table HEBERGEMENT
 	constraint pk_hebergement primary key (TYPE_HEBERG)
 );
 
+-- ============================================================
+--   Table : TEMP_RESERV                                             
+-- ============================================================
+create table TEMP_RESERV
+(
+	NOSEM		number 	not null,
+	CODERES		number 	not null,
+	CODESEJOUR	varchar(7) not null,
+	constraint pk_temp_reserv primary key (NOSEM,CODERES)
+);
+
+-- ==================================================
+-- AJOUT DES CLES / REFERENCES
+-- ==================================================
 alter table TARIFS
 	add constraint fk1_tarifs foreign key (CODESEJOUR)
 		references SEJOURS (CODESEJOUR);
@@ -244,5 +259,26 @@ alter table ETAP_SEJ
 alter table VILLE_ETAP
 	add constraint fk1_ville_etap foreign key (CODEPAYS)
 		references PAYS (CODEPAYS);
-		
 
+-- ==========================================
+-- VERIFICATION DES DONNEES ENTREES
+-- ==========================================
+alter table CALENDRIER
+	add constraint ck_calendrier
+		check (DATEDEB <= DATEFIN);
+
+alter table RESERVATION
+	add constraint ck1_reserv 
+		check (DATE_DE_VERSEE >= DATE_RES);
+
+alter table RESERVATION
+	add constraint ck2_reserv
+		check (MONT_RESERV > 0 and NB_ADULTS > 0 and NB_ENF >= 0 and SOMME_VERSEE >= 0);
+		
+alter table TARIFS
+	add constraint ck_tarifs
+		check (PRIXTTC > 0 and REDUC_ENF >= 0 and PRIX_SEM_SUP >= 0 and SUPPL_CH_SEULE >= 0);
+		
+alter table SEJOURS
+	add constraint ck_sejours
+		check (NB_RESERV <= NB_SEJOURS and NB_SEJOURS > 0);

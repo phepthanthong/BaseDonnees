@@ -102,8 +102,6 @@ update ETUDIANTS set ANNEE_ETU = ANNEE_ETU + 2 where NUM_ETU = 1;
 update ETUDIANTS set ANNEE_ETU = ANNEE_ETU + 1 where NUM_ETU = 3;
 select * from ETUDIANTS;
 
-
-
 -- 2) Créez un déclencheur qui permet de conserver la liste des anciens  élèves. Pour cela 
 -- 	on sera amener à créer une nouvelle table contenant également l’année de sortie de chaque élève.
 -- drop trigger ConserverEtu;
