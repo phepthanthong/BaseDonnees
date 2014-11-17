@@ -123,7 +123,7 @@ create table HOTEL_RESIDENCE
 (
 	CODESEJOUR			varchar(7)	not null,
 	CODEVILLE			number		not null,
-	NOM_HOTEL			varchar(15)	not null,
+	NOM_HOTEL			varchar(25)	not null,
 	NB_ETOILE			number		not null,
 	ADR_HOTEL			varchar(30)	not null,
 	TEL_HOTEL			number		not null,

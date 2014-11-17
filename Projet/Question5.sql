@@ -91,9 +91,18 @@ insert into TARIFS values ('SSFR02', 3, 800000, 100000, 20000, 30000);
 
 commit;
 
-insert into reservation values ( 1, 'hieu', 'trung', '546/256', '084', 'tphcm', 123456789, '20/11/2009', 10, 3, 50000, '20/11/2009',null );
-insert into reservation values ( 2, 'son', 'lam', '38/45', '084', 'tphcm', 987654321, '05/12/2010', 5, 4, 100000, '06/12/2010',null );
-insert into reservation values ( 3, 'minh', 'huong', '162/796', '084', 'tphcm', 009-545-2184, '12/12/2010', 2, 2, 200000, '12/12/2010',null );
+insert into RESERVATION values ( 1, 'hieu', 'trung', '546/256', '084', 'tphcm', 123456789, '20/11/2009', 10, 3, 50000, '20/11/2009',null );
+insert into RESERVATION values ( 2, 'son', 'lam', '38/45', '084', 'tphcm', 987654321, '05/12/2010', 5, 4, 100000, '06/12/2010',null );
+insert into RESERVATION values ( 3, 'minh', 'huong', '162/796', '084', 'tphcm', 009-545-2184, '12/12/2010', 2, 2, 200000, '12/12/2010',null );
 
 commit;
 
+insert into HOTEL_RESIDENCE values ('SSMD04', 0, 'BLACK STAR', 3, '45 RUE MAREMA', 16545-131-3541, 'NOM 1', 
+									'DESCRIPTION 1', 'PC', 10, 9);
+insert into HOTEL_RESIDENCE values ('SSPM08', 1, 'NOM HOTEL ESPAGNE', 3, '125 RUE SALPALO', 5431-59832-22, 'NOM 1', 
+									'DESCRIPTION 1', 'PC', 7, 6);
+insert into HOTEL_RESIDENCE values ('SSFR02', 2, 'NOM HOTEL FRANCE', 3, '20 RUE AJAX', 2458-32354-33, 'NOM 2', 
+									'DESCRIPTION 2', 'PC', 14, 13);		
+
+commit;
+									
