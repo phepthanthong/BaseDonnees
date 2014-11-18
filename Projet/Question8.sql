@@ -8,6 +8,7 @@ declare
 	montant_enf	number;
 	date_debut date;
 	date_reserv date;
+	old_mont_reserv number;
 begin
 	select c.DATEDEB into date_debut
 	from calendrier c
@@ -33,8 +34,16 @@ begin
 		and (t.NOSEM = :new.NOSEM)
 		and r.CODERES = :new.CODERES;	
 	
+	select r.MONT_RESERV into old_mont_reserv
+		from reservation r
+		where r.CODERES = :new.CODERES;
+		
+	if old_mont_reserv is null then
+		old_mont_reserv := 0;
+	end if;
+	
 	insert into DETAIL_RESERV values (:new.NOSEM, :new.CODERES, :new.CODESEJOUR, montant_adult, montant_enf, montant_enf + montant_adult);
-	update RESERVATION set MONT_RESERV = (montant_adult + montant_enf - SOMME_VERSEE) where CODERES = :new.CODERES;
+	update RESERVATION set MONT_RESERV = (montant_adult + montant_enf - SOMME_VERSEE + old_mont_reserv) where CODERES = :new.CODERES;
 	update SEJOURS set NB_RESERV = NB_RESERV + 1 where CODESEJOUR = :new.CODESEJOUR;
 end MontantReserv;
 /
@@ -105,5 +114,49 @@ exception
 	when others then
 		dbms_output.put_line('Erreur inconnue !!');
                
+end;
+/
+
+drop procedure UpdateReserv;
+
+create or replace procedure UpdateReserv(code_reserv number, new_nb_adults number, new_nb_enf number) is
+	cursor cs_nb_sejours is 
+		select dr.CODESEJOUR, dr.NOSEM
+		from DETAIL_RESERV dr
+		where dr.CODERES = code_reserv;
+	tempa number;
+	tempb number;
+	somme number;
+begin
+	if new_nb_adults is not null then 
+		update RESERVATION set NB_ADULTS = new_nb_adults where CODERES = code_reserv;
+	end if;
+	
+	if new_nb_enf is not null then
+		update RESERVATION set NB_ENF = new_nb_enf where CODERES = code_reserv;
+	end if;
+	
+	for l in cs_nb_sejours
+	loop
+		select t.PRIXTTC*new_nb_adults into tempa
+			from tarifs t, reservation r
+			where (t.CODESEJOUR = l.CODESEJOUR)
+			and (t.NOSEM = l.NOSEM)
+			and r.CODERES = code_reserv;
+	
+		update DETAIL_RESERV set PRIXTTC_ADULT = tempa where CODERES = code_reserv and CODESEJOUR = l.CODESEJOUR and NOSEM = l.NOSEM;
+		somme := somme + tempa;
+		
+		select t.REDUC_ENF*new_nb_enf into tempb
+			from tarifs t, reservation r
+			where (t.CODESEJOUR = l.CODESEJOUR)
+			and (t.NOSEM = l.NOSEM)
+			and r.CODERES = code_reserv;
+	
+		update DETAIL_RESERV set PRIXTTC_ENF = tempb where CODERES = code_reserv and CODESEJOUR = l.CODESEJOUR and NOSEM = l.NOSEM;
+		somme := tempa + tempb;	
+	end loop;
+	
+	update RESERVATION set MONT_RESERV = (somme - SOMME_VERSEE) where CODERES = code_reserv;
 end;
 /

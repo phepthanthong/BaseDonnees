@@ -98,11 +98,11 @@ insert into RESERVATION values ( 3, 'minh', 'huong', '162/796', '084', 'tphcm', 
 commit;
 
 insert into HOTEL_RESIDENCE values ('SSMD04', 0, 'BLACK STAR', 3, '45 RUE MAREMA', 16545-131-3541, 'NOM 1', 
-									'DESCRIPTION 1', 'PC', 10, 9);
+									'DESCRIPTION 1', 'PC', null, null);
 insert into HOTEL_RESIDENCE values ('SSPM08', 1, 'NOM HOTEL ESPAGNE', 3, '125 RUE SALPALO', 5431-59832-22, 'NOM 1', 
-									'DESCRIPTION 1', 'PC', 7, 6);
+									'DESCRIPTION 1', 'PC', null, null);
 insert into HOTEL_RESIDENCE values ('SSFR02', 2, 'NOM HOTEL FRANCE', 3, '20 RUE AJAX', 2458-32354-33, 'NOM 2', 
-									'DESCRIPTION 2', 'PC', 14, 13);		
+									'DESCRIPTION 2', 'PC', null, null);		
 
 commit;
 									

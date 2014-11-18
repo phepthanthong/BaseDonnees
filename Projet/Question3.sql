@@ -24,6 +24,7 @@ select s.NOMSEJOUR, c.NOSEM, t.PRIXTTC
 from sejours s, calendrier c, tarifs t
 where s.CODESEJOUR = t.CODESEJOUR
 and t.NOSEM = c.NOSEM
+and s.NOMSEJOUR = 'SOLEIL D''ANDALOUSIE'
 and ( DATEDEB, DATEFIN ) overlaps ( TO_DATE('10/04/2011'), TO_DATE('10/05/2011') );
 
 -- e) Quel est le nombre de séjours ayant un prix inférieur à 500
@@ -31,7 +32,7 @@ select count(*)
 from sejours s, tarifs t, calendrier c
 where s.CODESEJOUR = t.CODESEJOUR
 and t.NOSEM = c.NOSEM
-and t.PRIXTTC > 500;
+and t.PRIXTTC < 500;
 
 -- f) Quel est le prix moyenne des séjours en Espagne entre le 01/07/2011 et 31/08/2011
 select avg(PRIXTTC) as Prix_Moyen_Esp
@@ -63,9 +64,9 @@ and t.NOSEM = c.NOSEM
 and s.NOMSEJOUR = 'MER ET DESERT'
 and t.PRIXTTC = (
 	select min(PRIXTTC)
-	from tarifs t, sejours s
-	where s.CODESEJOUR = t.CODESEJOUR
-	and s.NOMSEJOUR = 'MER ET DESERT' ) ;
+	from tarifs t1, sejours s1
+	where s1.CODESEJOUR = t1.CODESEJOUR
+	and s1.NOMSEJOUR = 'MER ET DESERT' ) ;
 	
 -- j) Quel est le séjour (code et nom, date) le moins cher
 select s.CODESEJOUR, s.NOMSEJOUR, c.DATEDEB, c.DATEFIN, t.PRIXTTC
